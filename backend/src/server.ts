@@ -4,7 +4,7 @@ import path from "path";
 // Load root .env first, then backend/.env, then backend/.env.local (local overrides)
 dotenv.config({ path: path.resolve(process.cwd(), "../.env") });
 dotenv.config();
-dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
+dotenv.config({ path: path.resolve(process.cwd(), ".env.local"), override: true });
 
 // Validate environment variables immediately on startup (before imports)
 import { config, logger } from "./config/logger";
