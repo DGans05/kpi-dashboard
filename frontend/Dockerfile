@@ -2,6 +2,10 @@ FROM node:20-alpine AS base
 
 WORKDIR /app
 
+# Accept NEXT_PUBLIC_API_URL as build arg
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+
 COPY package.json package-lock.json* ./
 RUN npm install --production=false
 
@@ -15,6 +19,9 @@ RUN npm run build
 
 FROM node:20-alpine AS runner
 WORKDIR /app
+
+# Install curl for healthchecks
+RUN apk add --no-cache curl
 
 ENV NODE_ENV=production
 ENV PORT=3000

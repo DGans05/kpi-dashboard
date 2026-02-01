@@ -65,10 +65,10 @@ calc AS (
     restaurant_id,
     entry_date,
     orders_count,
-    ROUND(32 + (rand_ticket * 16), 2) AS avg_ticket,
-    ROUND((orders_count * (32 + (rand_ticket * 16))), 2) AS revenue,
-    ROUND(20 + (rand_labour * 5), 2) AS labour_pct,
-    ROUND(30 + (rand_food * 5), 2) AS food_pct
+    ROUND((32 + (rand_ticket * 16))::NUMERIC, 2) AS avg_ticket,
+    ROUND((orders_count * (32 + (rand_ticket * 16)))::NUMERIC, 2) AS revenue,
+    ROUND((20 + (rand_labour * 5))::NUMERIC, 2) AS labour_pct,
+    ROUND((30 + (rand_food * 5))::NUMERIC, 2) AS food_pct
   FROM base
 )
 INSERT INTO kpi_entries (
@@ -86,9 +86,9 @@ SELECT
   restaurant_id,
   entry_date,
   revenue,
-  ROUND(revenue * (labour_pct / 100), 2) AS labour_cost,
+  ROUND((revenue * (labour_pct / 100))::NUMERIC, 2) AS labour_cost,
   labour_pct AS labour_cost_percent,
-  ROUND(revenue * (food_pct / 100), 2) AS food_cost,
+  ROUND((revenue * (food_pct / 100))::NUMERIC, 2) AS food_cost,
   food_pct AS food_cost_percent,
   orders_count AS orders,
   avg_ticket

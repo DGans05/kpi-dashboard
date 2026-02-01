@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Pencil, Trash2, Search, Shield, User as UserIcon, Eye } from 'lucide-react';
 import type { User } from '@/lib/api/users';
 import { formatDate } from '@/lib/utils/formatters';
+import { cn } from '@/lib/utils';
 
 interface UserTableProps {
   users: User[];
@@ -91,7 +92,7 @@ export function UserTable({ users, isLoading, onEdit, onDelete }: UserTableProps
             placeholder="Search by name or email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full max-w-xs pl-10 pr-4 py-2 rounded-lg border border-slate-700 bg-slate-900 text-sm text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+            className="w-full max-w-xs pl-10 pr-4 py-3 rounded-md border border-input bg-background text-sm text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
         </div>
       </div>
@@ -102,19 +103,19 @@ export function UserTable({ users, isLoading, onEdit, onDelete }: UserTableProps
           <table className="w-full min-w-[700px]">
             <thead>
               <tr className="border-b border-slate-800 bg-slate-900/50">
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Name
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Email
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Role
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Restaurant
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Status
                 </th>
                 <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-400">
@@ -135,14 +136,15 @@ export function UserTable({ users, isLoading, onEdit, onDelete }: UserTableProps
                   return (
                     <tr
                       key={user.id}
-                      className={`border-b border-slate-800/50 hover:bg-slate-900/50 transition ${
-                        index % 2 === 0 ? 'bg-slate-950/30' : ''
-                      }`}
+                      className={cn(
+                        'border-b border-border/50 hover:bg-muted/50 transition',
+                        index % 2 === 0 ? 'bg-muted/20' : ''
+                      )}
                     >
-                      <td className="px-4 py-3 text-sm font-medium text-slate-200">
+                      <td className="px-4 py-3 text-sm font-medium text-foreground">
                         {user.fullName || '—'}
                       </td>
-                      <td className="px-4 py-3 text-sm text-slate-300">
+                      <td className="px-4 py-3 text-sm text-foreground">
                         {user.email}
                       </td>
                       <td className="px-4 py-3">
@@ -153,7 +155,7 @@ export function UserTable({ users, isLoading, onEdit, onDelete }: UserTableProps
                           {user.role}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-sm text-slate-300">
+                      <td className="px-4 py-3 text-sm text-foreground">
                         {user.restaurant?.name || '—'}
                       </td>
                       <td className="px-4 py-3">
@@ -172,7 +174,7 @@ export function UserTable({ users, isLoading, onEdit, onDelete }: UserTableProps
                           {onEdit && (
                             <button
                               onClick={() => onEdit(user)}
-                              className="rounded-lg p-2 text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition"
+                              className="rounded-md p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition"
                               title="Edit user"
                             >
                               <Pencil className="h-4 w-4" />
@@ -181,7 +183,7 @@ export function UserTable({ users, isLoading, onEdit, onDelete }: UserTableProps
                           {onDelete && (
                             <button
                               onClick={() => handleDeleteClick(user)}
-                              className="rounded-lg p-2 text-slate-400 hover:bg-rose-500/20 hover:text-rose-400 transition"
+                              className="rounded-md p-2 text-muted-foreground hover:bg-destructive/20 hover:text-destructive transition"
                               title="Delete user"
                             >
                               <Trash2 className="h-4 w-4" />

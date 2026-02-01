@@ -8,25 +8,29 @@ import { useCreateUser, useUpdateUser } from '@/lib/hooks/useUsers';
 import type { User } from '@/lib/api/users';
 import type { Restaurant } from '@/lib/api/restaurants';
 
-const createUserSchema = z.object({
+// Schema that works for both create and update
+const userFormSchema = z.object({
   email: z.string().email('Invalid email format'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: z.string().optional(),
   fullName: z.string().optional(),
   role: z.enum(['admin', 'manager', 'viewer']),
   restaurantId: z.string().uuid().nullable().optional(),
   isActive: z.boolean().optional(),
 });
 
-const updateUserSchema = z.object({
-  email: z.string().email('Invalid email format'),
-  password: z.string().min(8, 'Password must be at least 8 characters').optional().or(z.literal('')),
-  fullName: z.string().optional(),
-  role: z.enum(['admin', 'manager', 'viewer']),
-  restaurantId: z.string().uuid().nullable().optional(),
-  isActive: z.boolean().optional(),
-});
+type FormData = z.infer<typeof userFormSchema>;
 
-type FormData = z.infer<typeof createUserSchema>;
+// Create validation schema with required password
+const createUserSchema = userFormSchema.refine(
+  (data) => data.password && data.password.length >= 8,
+  { message: 'Password must be at least 8 characters', path: ['password'] }
+);
+
+// Update validation schema with optional password
+const updateUserSchema = userFormSchema.refine(
+  (data) => !data.password || data.password.length === 0 || data.password.length >= 8,
+  { message: 'Password must be at least 8 characters', path: ['password'] }
+);
 
 interface UserFormProps {
   user?: User;
@@ -69,11 +73,15 @@ export function UserForm({ user, restaurants, onSuccess, onCancel }: UserFormPro
           restaurantId: data.restaurantId || null,
           isActive: data.isActive,
         };
+        // Only include password if provided
+        if (data.password && data.password.length > 0) {
+          updateData.password = data.password;
+        }
         await updateMutation.mutateAsync({ id: user.id, data: updateData });
       } else {
         await createMutation.mutateAsync({
           email: data.email,
-          password: data.password,
+          password: data.password || '',
           fullName: data.fullName,
           role: data.role,
           restaurantId: data.restaurantId || null,
@@ -216,7 +224,7 @@ export function UserForm({ user, restaurants, onSuccess, onCancel }: UserFormPro
         <button
           type="submit"
           disabled={isLoading}
-          className="flex-1 inline-flex items-center justify-center rounded-lg bg-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/40 hover:bg-indigo-400 disabled:opacity-60 disabled:cursor-not-allowed transition"
+          className="flex-1 inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-60 disabled:cursor-not-allowed transition"
         >
           {isLoading && (
             <span className="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />

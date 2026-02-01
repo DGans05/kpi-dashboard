@@ -28,15 +28,19 @@ interface DashboardLayoutProps {
   children: ReactNode;
 }
 
-const navItems = [
+const navItems: Array<{
+  label: string;
+  href: string;
+  icon: typeof LayoutDashboard;
+  adminOnly?: boolean;
+}> = [
   { label: 'Overview', href: '/dashboard', icon: LayoutDashboard },
   { label: 'KPI Entries', href: '/dashboard/kpi', icon: FileSpreadsheet },
   { label: 'Labour KPIs', href: '/dashboard/labour', icon: Users },
   { label: 'Food KPIs', href: '/dashboard/food', icon: Utensils },
   { label: 'Settings', href: '/dashboard/settings', icon: Settings },
+  { label: 'Admin', href: '/dashboard/admin', icon: ShieldCheck, adminOnly: true },
 ];
-
-const adminNavItem = { label: 'Admin', href: '/dashboard/admin', icon: ShieldCheck };
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const router = useRouter();
@@ -100,7 +104,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-sidebar-border bg-sidebar transition-transform duration-300 md:translate-x-0',
+          'fixed inset-y-0 left-0 z-50 flex w-[240px] flex-col border-r border-sidebar-border bg-sidebar transition-transform duration-300 md:translate-x-0',
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
@@ -126,47 +130,28 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           <div className="mb-2 px-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
             Menu
           </div>
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const active = isActive(item.href);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
-                  active
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
-                )}
-              >
-                <Icon className="h-4 w-4" />
-                {item.label}
-                {active && <ChevronRight className="ml-auto h-4 w-4" />}
-              </Link>
-            );
-          })}
-
-          {user?.role === 'admin' && (
-            <>
-              <div className="mb-2 mt-6 px-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                Admin
-              </div>
-              <Link
-                href={adminNavItem.href}
-                className={cn(
-                  'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
-                  isActive(adminNavItem.href)
-                    ? 'bg-primary text-primary-foreground'
-                    : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
-                )}
-              >
-                <adminNavItem.icon className="h-4 w-4" />
-                {adminNavItem.label}
-                {isActive(adminNavItem.href) && <ChevronRight className="ml-auto h-4 w-4" />}
-              </Link>
-            </>
-          )}
+          {navItems
+            .filter((item) => !item.adminOnly || user?.role === 'admin')
+            .map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                    active
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+                  )}
+                >
+                  <Icon className="h-4 w-4" />
+                  {item.label}
+                  {active && <ChevronRight className="ml-auto h-4 w-4" />}
+                </Link>
+              );
+            })}
         </nav>
 
         {/* User section */}
@@ -210,7 +195,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       </aside>
 
       {/* Main content */}
-      <div className="md:pl-64">
+      <div className="md:pl-[240px]">
         {/* Header */}
         <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-border bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:px-6">
           <button
@@ -258,7 +243,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
         {/* Page content */}
         <main className="p-4 md:p-6 lg:p-8">
-          <div className="mx-auto max-w-7xl">{children}</div>
+          <div className="mx-auto max-w-7xl space-y-6">{children}</div>
         </main>
       </div>
     </div>

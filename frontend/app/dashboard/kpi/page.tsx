@@ -143,7 +143,7 @@ export default function KPIEntriesPage() {
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
               max={endDate}
-              className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="rounded-md border border-input bg-background px-4 py-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
           <div>
@@ -156,7 +156,7 @@ export default function KPIEntriesPage() {
               onChange={(e) => setEndDate(e.target.value)}
               min={startDate}
               max={new Date().toISOString().split('T')[0]}
-              className="rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="rounded-md border border-input bg-background px-4 py-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
           <Button variant="outline" onClick={handleApplyFilters}>
@@ -170,7 +170,7 @@ export default function KPIEntriesPage() {
 
       {/* Summary Stats */}
       {stats && (
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
           <Card className="p-4">
             <p className="text-xs font-medium text-muted-foreground">Total Revenue</p>
             <p className="mt-1 text-xl font-bold text-foreground">

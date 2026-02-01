@@ -151,5 +151,74 @@ docker-compose up -d          # Start all services
 - Sidebar with icons, collapsible on mobile
 - Files changed: globals.css, tailwind.config.ts, layout.tsx, all dashboard pages, all KPI components
 
+### Project Cleanup (2026-01-30)
+- Fixed database schema: added `timezone`, `is_active` to restaurants; `full_name`, `is_active` to users
+- Fixed environment variable: `NEXT_PUBLIC_API_BASE_URL` → `NEXT_PUBLIC_API_URL`, added `FRONTEND_URL`
+- Fixed hardcoded colors in `KPIChart.tsx` and `badge.tsx` to use CSS variables
+- Removed unused import in `auth.service.ts`
+- Removed 4 redundant documentation files (summaries that duplicated main docs)
+
+### Testing & Bug Fixes (2026-01-31)
+- Fixed root redirect: localhost now goes directly to /login (307 redirect)
+- Created `frontend/.env.local` with `NEXT_PUBLIC_API_URL=http://localhost:4000`
+- Fixed missing database table: added `audit_logs` table to init.sql and created in database
+- Fixed Docker healthchecks: added curl to both Dockerfiles, rebuilt containers - ALL SERVICES NOW HEALTHY
+- Fixed Next.js build-time env vars: Updated Dockerfile and docker-compose.yml to pass NEXT_PUBLIC_API_URL as build arg
+- Comprehensive testing documented in `TEST_RESULTS.md`
+- All API endpoints verified working (auth, KPI, users, restaurants, audit, health)
+- Test credentials: admin@kpi.com / password123
+- **Status: ✅ All systems operational, no issues remaining**
+
+## README Quick Reference
+
+### Features
+- Dashboard overview with KPI cards and trend indicators
+- Data visualization with Recharts (line, bar, area charts)
+- KPI entry management (CRUD operations)
+- Labour & Food cost tracking pages
+- User management (admin panel)
+- Audit logging
+- CSV export for reports
+- Role-based access control (admin, manager, viewer)
+
+### Access Points
+- **Frontend**: http://localhost:3000 (redirects to /login)
+- **Backend API**: http://localhost:4000
+- **Health Check**: http://localhost:4000/health
+- **Nginx Proxy**: http://localhost:80
+
+### Default Accounts
+- **Admin**: admin@kpi.com / password123
+- **Manager 1**: manager1@kpi.com / password123 (Downtown Delivery Hub, NY)
+- **Manager 2**: manager2@kpi.com / password123 (Westside Kitchen, LA)
+
+### Docker Commands
+```bash
+docker-compose up -d          # Start all services
+docker-compose logs -f        # View logs
+docker-compose down -v        # Reset (deletes database)
+docker-compose ps             # Check service status
+```
+
+### Prerequisites
+- Docker v20+ & Docker Compose v2+
+- Node.js v20+ (for local dev)
+- Git
+
+### Project Structure Highlights
+- **frontend/app/**: Next.js App Router pages (dashboard/, login/, etc.)
+- **frontend/components/**: UI components (ui/, kpi/, admin/)
+- **frontend/lib/**: API clients, hooks, stores, providers
+- **backend/src/**: Express app (controllers, services, repositories, middleware, routes)
+- **database/**: init.sql (schema), seed.sql (test data)
+- **nginx/**: nginx.conf for reverse proxy
+
+### Key Documentation Files
+- `README.md` - Main project documentation
+- `TEST_RESULTS.md` - Comprehensive test results and credentials
+- `DEPLOYMENT.md` - Production deployment guide
+- `AUTH_SERVICE.md` - Authentication service documentation
+- `ENV_CONFIGURATION.md` - Environment setup guide
+
 ---
-*Last updated: 2026-01-28*
+*Last updated: 2026-01-31*

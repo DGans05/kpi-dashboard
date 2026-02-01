@@ -147,7 +147,7 @@ export default function SettingsPage() {
             <input
               type="password"
               {...register('currentPassword')}
-              className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="w-full rounded-md border border-input bg-background px-4 py-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
             {errors.currentPassword && (
               <p className="mt-1 text-xs text-destructive">{errors.currentPassword.message}</p>
@@ -161,7 +161,7 @@ export default function SettingsPage() {
             <input
               type="password"
               {...register('newPassword')}
-              className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="w-full rounded-md border border-input bg-background px-4 py-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
             {errors.newPassword && (
               <p className="mt-1 text-xs text-destructive">{errors.newPassword.message}</p>
@@ -175,7 +175,7 @@ export default function SettingsPage() {
             <input
               type="password"
               {...register('confirmPassword')}
-              className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="w-full rounded-md border border-input bg-background px-4 py-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
             {errors.confirmPassword && (
               <p className="mt-1 text-xs text-destructive">{errors.confirmPassword.message}</p>

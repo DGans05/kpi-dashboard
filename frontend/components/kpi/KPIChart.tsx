@@ -37,14 +37,14 @@ interface KPIChartProps {
   yAxisFormatter?: (value: number) => string;
 }
 
-// Theme-aware colors using CSS variables mapped to Tailwind
+// Theme-aware colors using CSS variables
 const COLORS: Record<string, string> = {
-  revenue: 'hsl(238, 76%, 58%)',      // primary/chart-1
-  labourCost: 'hsl(38, 92%, 50%)',    // warning/chart-3
-  foodCost: 'hsl(142, 71%, 45%)',     // success/chart-2
-  orders: 'hsl(280, 65%, 60%)',       // chart-5
-  labourCostPercent: 'hsl(38, 92%, 50%)',
-  foodCostPercent: 'hsl(142, 71%, 45%)',
+  revenue: 'hsl(var(--chart-1))',           // primary
+  labourCost: 'hsl(var(--chart-3))',        // warning
+  foodCost: 'hsl(var(--chart-2))',          // success
+  orders: 'hsl(var(--chart-5))',            // purple
+  labourCostPercent: 'hsl(var(--chart-3))',
+  foodCostPercent: 'hsl(var(--chart-2))',
 };
 
 const LABELS: Record<string, string> = {
@@ -139,7 +139,7 @@ export function KPIChart({
               <Bar
                 key={key}
                 dataKey={key}
-                fill={COLORS[key] || 'hsl(238, 76%, 58%)'}
+                fill={COLORS[key] || 'hsl(var(--chart-1))'}
                 radius={[4, 4, 0, 0]}
               />
             ))}
@@ -170,8 +170,8 @@ export function KPIChart({
                 key={key}
                 type="monotone"
                 dataKey={key}
-                stroke={COLORS[key] || 'hsl(238, 76%, 58%)'}
-                fill={COLORS[key] || 'hsl(238, 76%, 58%)'}
+                stroke={COLORS[key] || 'hsl(var(--chart-1))'}
+                fill={COLORS[key] || 'hsl(var(--chart-1))'}
                 fillOpacity={0.15}
               />
             ))}
@@ -202,9 +202,9 @@ export function KPIChart({
                 key={key}
                 type="monotone"
                 dataKey={key}
-                stroke={COLORS[key] || 'hsl(238, 76%, 58%)'}
+                stroke={COLORS[key] || 'hsl(var(--chart-1))'}
                 strokeWidth={2}
-                dot={{ fill: COLORS[key] || 'hsl(238, 76%, 58%)', strokeWidth: 0, r: 3 }}
+                dot={{ fill: COLORS[key] || 'hsl(var(--chart-1))', strokeWidth: 0, r: 3 }}
                 activeDot={{ r: 5, strokeWidth: 0 }}
               />
             ))}

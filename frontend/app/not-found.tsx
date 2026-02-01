@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { FileQuestion, Home, ArrowLeft } from 'lucide-react';
 
@@ -28,7 +30,7 @@ export default function NotFound() {
           </Link>
           <button
             onClick={() => typeof window !== 'undefined' && window.history.back()}
-            className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-700 bg-slate-900/80 px-6 py-3 text-sm font-medium text-slate-200 hover:bg-slate-800 transition"
+            className="inline-flex items-center justify-center gap-2 rounded-md border border-input bg-background px-6 py-3 text-sm font-medium text-foreground hover:bg-muted transition"
           >
             <ArrowLeft className="h-4 w-4" />
             Go Back

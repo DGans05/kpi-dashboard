@@ -13,6 +13,7 @@ interface LoginRequest {
 }
 
 interface RegisterRequest {
+  username: string;
   email: string;
   password: string;
   passwordConfirm: string;
@@ -130,20 +131,30 @@ class AuthController {
    * POST /api/auth/register
    * Create new user account
    *
-   * Body: { email: string, password: string, passwordConfirm: string, restaurantId?: string }
+   * Body: { username: string, email: string, password: string, passwordConfirm: string, restaurantId?: string }
    * Response: { user: UserResponse, message: string }
    * Status: 201 (created), 400 (validation), 409 (conflict), 500 (error)
    */
   async register(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { email, password, passwordConfirm, restaurantId } = req.body as RegisterRequest;
+      const { username, email, password, passwordConfirm, restaurantId } = req.body as RegisterRequest;
 
       // ========== Validation ==========
-      if (!email || !password || !passwordConfirm) {
+      if (!username || !email || !password || !passwordConfirm) {
         res.status(400).json({
           error: 'Validation failed',
-          message: 'Email, password, and passwordConfirm are required',
+          message: 'Username, email, password, and passwordConfirm are required',
           code: 'MISSING_FIELDS',
+        });
+        return;
+      }
+
+      // Validate username length
+      if (username.length < 3) {
+        res.status(400).json({
+          error: 'Validation failed',
+          message: 'Username must be at least 3 characters long',
+          code: 'INVALID_USERNAME',
         });
         return;
       }
@@ -201,13 +212,15 @@ class AuthController {
         email.toLowerCase(),
         passwordHash,
         'viewer', // Default role for new users
-        restaurantId || null
+        restaurantId || null,
+        username
       );
 
       logger.info('User registered successfully', {
         userId: user.id,
         email: user.email,
         role: user.role,
+        username: user.fullName,
       });
 
       // ========== Response ==========

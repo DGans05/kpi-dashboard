@@ -1,4 +1,4 @@
-import { query, getClient } from '../config/database';
+import { query } from '../config/database';
 import { comparePassword } from '../utils/crypto';
 import { logger } from '../config/logger';
 
@@ -305,10 +305,10 @@ class AuthService {
       // Note: validator should call this before createUser
       // Insert user
       const result = await query(
-        `INSERT INTO users (email, password_hash, role, restaurant_id)
-         VALUES ($1, $2, $3, $4)
-         RETURNING id, email, role, restaurant_id, created_at, last_login_at`,
-        [email.toLowerCase(), passwordHash, role, restaurantId || null]
+        `INSERT INTO users (email, password_hash, role, restaurant_id, full_name)
+         VALUES ($1, $2, $3, $4, $5)
+         RETURNING id, email, role, restaurant_id, full_name, created_at, last_login_at`,
+        [email.toLowerCase(), passwordHash, role, restaurantId || null, fullName || null]
       );
 
       const user = result.rows[0] as RawUser;

@@ -51,7 +51,7 @@ router.get('/me', authenticate, (req, res, next) => authController.me(req, res, 
  * POST /api/auth/register
  * Create new user account
  * 
- * Body: { email: string, password: string, passwordConfirm: string, restaurantId?: string }
+ * Body: { username: string, email: string, password: string, passwordConfirm: string, restaurantId?: string }
  * Response: { message: string, user: UserResponse }
  * Status: 201, 400, 409, 500
  */

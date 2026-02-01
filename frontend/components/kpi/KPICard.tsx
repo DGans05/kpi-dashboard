@@ -58,7 +58,7 @@ export function KPICard({
   return (
     <Card
       className={cn(
-        'relative overflow-hidden p-5 transition-all hover:shadow-elevated',
+        'relative overflow-hidden p-6 transition-all hover:shadow-elevated',
         className
       )}
     >

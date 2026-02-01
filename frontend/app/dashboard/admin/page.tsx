@@ -240,7 +240,7 @@ export default function AdminPage() {
                   onChange={(e) =>
                     setAuditDateRange((prev) => ({ ...prev, startDate: e.target.value }))
                   }
-                  className="rounded-lg border border-input bg-background px-2 py-1.5 text-xs text-foreground focus:border-primary focus:outline-none"
+                  className="rounded-md border border-input bg-background px-4 py-3 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                 />
               </div>
               <div className="flex items-center gap-2">
@@ -252,7 +252,7 @@ export default function AdminPage() {
                     setAuditDateRange((prev) => ({ ...prev, endDate: e.target.value }))
                   }
                   max={new Date().toISOString().split('T')[0]}
-                  className="rounded-lg border border-input bg-background px-2 py-1.5 text-xs text-foreground focus:border-primary focus:outline-none"
+                  className="rounded-md border border-input bg-background px-4 py-3 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                 />
               </div>
               <Button

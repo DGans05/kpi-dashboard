@@ -14,15 +14,10 @@ export interface AuthState {
   logout: () => Promise<void>;
 }
 
-const withDevtools =
-  process.env.NODE_ENV !== 'production'
-    ? devtools<AuthState>
-    : ((fn: any) => fn);
-
 export const useAuthStore = create<AuthState>()(
-  withDevtools(
+  devtools(
     persist(
-      (set, get) => ({
+      (set) => ({
         user: null,
         isAuthenticated: false,
         isLoading: false,
@@ -60,6 +55,7 @@ export const useAuthStore = create<AuthState>()(
         }),
       },
     ),
+    { enabled: process.env.NODE_ENV !== 'production' },
   ),
 );
 

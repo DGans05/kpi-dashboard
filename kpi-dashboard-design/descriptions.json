@@ -1,0 +1,73 @@
+{
+  "name": "Elegant Design System",
+  "version": "1.0.0",
+  "description": "A design system for a modern KPI dashboard application.",
+  "colors": {
+    "primary": "#FFA500",
+    "light": {
+      "background": "#FFFFFF",
+      "surface": "#F5F5F5",
+      "text": "#111827",
+      "card": "#FFFFFF",
+      "border": "#E5E7EB"
+    },
+    "dark": {
+      "background": "#0F172A",
+      "surface": "#1E293B",
+      "text": "#FFFFFF",
+      "card": "#1E293B",
+      "border": "#374151"
+    }
+  },
+  "typography": {
+    "fontFamily": "Poppins, sans-serif",
+    "headings": {
+      "fontFamily": "Poppins, sans-serif",
+      "fontWeight": 600
+    },
+    "body": {
+      "fontFamily": "Poppins, sans-serif",
+      "fontWeight": 400
+    }
+  },
+  "layout": {
+    "navigation": {
+      "width": "240px"
+    },
+    "header": {
+      "height": "64px"
+    },
+    "grid": {
+      "gap": "24px"
+    }
+  },
+  "components": {
+    "card": {
+      "borderRadius": "12px",
+      "boxShadow": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+      "padding": "24px"
+    },
+    "button": {
+      "borderRadius": "8px",
+      "padding": "12px 24px",
+      "fontWeight": 500
+    },
+    "input": {
+      "borderRadius": "8px",
+      "padding": "12px 16px",
+      "border": "1px solid #D1D5DB"
+    },
+    "table": {
+      "header": {
+        "fontWeight": 600,
+        "padding": "12px 16px"
+      },
+      "cell": {
+        "padding": "12px 16px"
+      },
+      "row": {
+        "borderBottom": "1px solid #E5E7EB"
+      }
+    }
+  }
+}

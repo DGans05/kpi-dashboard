@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
 
 import { useLogin } from '@/lib/hooks/useAuth';
 import { useAuthStore } from '@/lib/store/authStore';
@@ -133,10 +134,17 @@ export default function LoginPage() {
               {isSubmittingForm ? 'Signing in...' : 'Sign in'}
             </Button>
 
-            <p className="mt-4 text-center text-xs text-muted-foreground">
-              Use the credentials provided by your administrator to access the
-              dashboard.
-            </p>
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground">
+                Don't have an account?{' '}
+                <Link
+                  href="/register"
+                  className="font-medium text-primary hover:underline"
+                >
+                  Create account
+                </Link>
+              </p>
+            </div>
           </form>
         </Card>
 

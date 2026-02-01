@@ -101,7 +101,7 @@ export default function DashboardOverviewPage() {
                 type="date"
                 value={customStart}
                 onChange={(e) => setCustomStart(e.target.value)}
-                className="rounded-lg border border-input bg-background px-2 py-1.5 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                className="rounded-md border border-input bg-background px-4 py-3 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
               <span className="text-muted-foreground">to</span>
               <input
@@ -109,7 +109,7 @@ export default function DashboardOverviewPage() {
                 value={customEnd}
                 onChange={(e) => setCustomEnd(e.target.value)}
                 max={new Date().toISOString().split('T')[0]}
-                className="rounded-lg border border-input bg-background px-2 py-1.5 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                className="rounded-md border border-input bg-background px-4 py-3 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </>
           )}
@@ -160,7 +160,7 @@ export default function DashboardOverviewPage() {
 
       {/* Loading State */}
       {isLoading && (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
           {[...Array(4)].map((_, i) => (
             <Card key={i} className="p-5 animate-pulse">
               <div className="h-4 w-24 bg-muted rounded mb-3" />
@@ -180,7 +180,7 @@ export default function DashboardOverviewPage() {
       {/* KPI Cards */}
       {summary && (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
             <KPICard
               title="Labour Cost"
               value={summary.current.labourCostPercent}
@@ -217,7 +217,7 @@ export default function DashboardOverviewPage() {
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <KPICard
               title="Average Ticket"
               value={summary.current.avgTicket}
@@ -240,7 +240,7 @@ export default function DashboardOverviewPage() {
 
           {/* Charts */}
           {summary.chartData.length > 0 && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <KPIChart
                 data={summary.chartData}
                 type="area"

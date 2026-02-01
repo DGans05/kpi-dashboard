@@ -19,6 +19,11 @@ export interface LoginResponse {
   message: string;
 }
 
+export interface RegisterResponse {
+  user: User;
+  message: string;
+}
+
 export function login(
   email: string,
   password: string,
@@ -26,6 +31,23 @@ export function login(
   return postRequest<LoginResponse, { email: string; password: string }>(
     '/api/auth/login',
     { email, password },
+  );
+}
+
+export function register(
+  username: string,
+  email: string,
+  password: string,
+  passwordConfirm: string,
+): Promise<RegisterResponse> {
+  return postRequest<RegisterResponse, { 
+    username: string;
+    email: string; 
+    password: string; 
+    passwordConfirm: string;
+  }>(
+    '/api/auth/register',
+    { username, email, password, passwordConfirm },
   );
 }
 

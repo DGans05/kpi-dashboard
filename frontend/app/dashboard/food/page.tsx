@@ -141,7 +141,7 @@ export default function FoodKPIsPage() {
               className={cn(
                 'px-3 py-1.5 rounded-lg text-xs font-medium transition-colors',
                 preset === p
-                  ? 'bg-success text-success-foreground'
+                  ? 'bg-primary text-primary-foreground'
                   : 'bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground'
               )}
             >
@@ -160,7 +160,7 @@ export default function FoodKPIsPage() {
                 type="date"
                 value={customStart}
                 onChange={(e) => setCustomStart(e.target.value)}
-                className="rounded-lg border border-input bg-background px-2 py-1.5 text-xs text-foreground focus:border-success focus:outline-none"
+                className="rounded-md border border-input bg-background px-4 py-3 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
               <span className="text-muted-foreground">to</span>
               <input
@@ -168,7 +168,7 @@ export default function FoodKPIsPage() {
                 value={customEnd}
                 onChange={(e) => setCustomEnd(e.target.value)}
                 max={new Date().toISOString().split('T')[0]}
-                className="rounded-lg border border-input bg-background px-2 py-1.5 text-xs text-foreground focus:border-success focus:outline-none"
+                className="rounded-md border border-input bg-background px-4 py-3 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </>
           )}
@@ -195,7 +195,7 @@ export default function FoodKPIsPage() {
       {/* Stats Cards */}
       {stats && (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <KPICard
               title="Average Food Cost %"
               value={stats.avgFoodPercent}
@@ -219,7 +219,7 @@ export default function FoodKPIsPage() {
 
           {/* Charts */}
           {chartData.length > 0 && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <KPIChart
                 data={chartData}
                 type="line"

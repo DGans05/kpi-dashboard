@@ -160,7 +160,7 @@ export default function LabourKPIsPage() {
                 type="date"
                 value={customStart}
                 onChange={(e) => setCustomStart(e.target.value)}
-                className="rounded-lg border border-input bg-background px-2 py-1.5 text-xs text-foreground focus:border-primary focus:outline-none"
+                className="rounded-md border border-input bg-background px-4 py-3 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
               <span className="text-muted-foreground">to</span>
               <input
@@ -168,7 +168,7 @@ export default function LabourKPIsPage() {
                 value={customEnd}
                 onChange={(e) => setCustomEnd(e.target.value)}
                 max={new Date().toISOString().split('T')[0]}
-                className="rounded-lg border border-input bg-background px-2 py-1.5 text-xs text-foreground focus:border-primary focus:outline-none"
+                className="rounded-md border border-input bg-background px-4 py-3 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </>
           )}
@@ -195,7 +195,7 @@ export default function LabourKPIsPage() {
       {/* Stats Cards */}
       {stats && (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <KPICard
               title="Average Labour Cost %"
               value={stats.avgLabourPercent}
@@ -219,7 +219,7 @@ export default function LabourKPIsPage() {
 
           {/* Charts */}
           {chartData.length > 0 && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <KPIChart
                 data={chartData}
                 type="line"

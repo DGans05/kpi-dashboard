@@ -3,29 +3,29 @@
 @tailwind utilities;
 
 :root {
-  /* Light mode - soft, modern palette */
-  --background: 210 20% 98%;
-  --foreground: 222 47% 11%;
+  /* Light mode - Elegant Design System */
+  --background: 0 0% 100%; /* #FFFFFF */
+  --foreground: 222 47% 11%; /* #111827 */
 
-  --muted: 210 20% 94%;
+  --muted: 0 0% 96%; /* #F5F5F5 */
   --muted-foreground: 215 16% 47%;
 
-  --popover: 0 0% 100%;
-  --popover-foreground: 222 47% 11%;
+  --popover: 0 0% 100%; /* #FFFFFF */
+  --popover-foreground: 222 47% 11%; /* #111827 */
 
-  --card: 0 0% 100%;
-  --card-foreground: 222 47% 11%;
+  --card: 0 0% 100%; /* #FFFFFF */
+  --card-foreground: 222 47% 11%; /* #111827 */
 
-  --border: 214 32% 91%;
-  --input: 214 32% 91%;
+  --border: 214 32% 91%; /* #E5E7EB */
+  --input: 214 32% 91%; /* #E5E7EB */
 
-  --primary: 238 76% 58%;
+  --primary: 39 100% 50%; /* #FFA500 Orange */
   --primary-foreground: 0 0% 100%;
 
-  --secondary: 210 20% 94%;
-  --secondary-foreground: 222 47% 11%;
+  --secondary: 0 0% 96%; /* #F5F5F5 */
+  --secondary-foreground: 222 47% 11%; /* #111827 */
 
-  --accent: 238 76% 58%;
+  --accent: 39 100% 50%; /* #FFA500 Orange */
   --accent-foreground: 0 0% 100%;
 
   --destructive: 0 84% 60%;
@@ -37,49 +37,49 @@
   --warning: 38 92% 50%;
   --warning-foreground: 0 0% 100%;
 
-  --ring: 238 76% 58%;
+  --ring: 39 100% 50%; /* #FFA500 Orange */
 
   --radius: 0.75rem;
 
   /* Chart colors */
-  --chart-1: 238 76% 58%;
-  --chart-2: 142 71% 45%;
-  --chart-3: 38 92% 50%;
-  --chart-4: 0 84% 60%;
-  --chart-5: 280 65% 60%;
+  --chart-1: 39 100% 50%; /* Orange */
+  --chart-2: 142 71% 45%; /* Green */
+  --chart-3: 38 92% 50%; /* Yellow/Orange */
+  --chart-4: 0 84% 60%; /* Red */
+  --chart-5: 280 65% 60%; /* Purple */
 
   /* Sidebar */
-  --sidebar: 0 0% 100%;
-  --sidebar-foreground: 222 47% 11%;
-  --sidebar-border: 214 32% 91%;
-  --sidebar-accent: 210 20% 96%;
-  --sidebar-accent-foreground: 222 47% 11%;
+  --sidebar: 0 0% 100%; /* #FFFFFF */
+  --sidebar-foreground: 222 47% 11%; /* #111827 */
+  --sidebar-border: 214 32% 91%; /* #E5E7EB */
+  --sidebar-accent: 0 0% 96%; /* #F5F5F5 */
+  --sidebar-accent-foreground: 222 47% 11%; /* #111827 */
 }
 
 .dark {
-  /* Dark mode - deep, rich palette */
-  --background: 222 47% 6%;
-  --foreground: 210 40% 98%;
+  /* Dark mode - Elegant Design System (Slate Blue) */
+  --background: 222 47% 9%; /* #0F172A */
+  --foreground: 0 0% 100%; /* #FFFFFF */
 
-  --muted: 217 33% 14%;
+  --muted: 217 33% 16%; /* #1E293B */
   --muted-foreground: 215 20% 65%;
 
-  --popover: 222 47% 8%;
-  --popover-foreground: 210 40% 98%;
+  --popover: 222 47% 16%; /* #1E293B */
+  --popover-foreground: 0 0% 100%; /* #FFFFFF */
 
-  --card: 222 47% 8%;
-  --card-foreground: 210 40% 98%;
+  --card: 222 47% 16%; /* #1E293B */
+  --card-foreground: 0 0% 100%; /* #FFFFFF */
 
-  --border: 217 33% 18%;
-  --input: 217 33% 18%;
+  --border: 217 33% 23%; /* #374151 */
+  --input: 217 33% 23%; /* #374151 */
 
-  --primary: 238 76% 65%;
+  --primary: 39 100% 55%; /* Orange, slightly brighter for dark mode */
   --primary-foreground: 0 0% 100%;
 
-  --secondary: 217 33% 14%;
-  --secondary-foreground: 210 40% 98%;
+  --secondary: 217 33% 16%; /* #1E293B */
+  --secondary-foreground: 0 0% 100%; /* #FFFFFF */
 
-  --accent: 238 76% 65%;
+  --accent: 39 100% 55%; /* Orange, slightly brighter for dark mode */
   --accent-foreground: 0 0% 100%;
 
   --destructive: 0 72% 51%;
@@ -91,21 +91,21 @@
   --warning: 38 92% 50%;
   --warning-foreground: 0 0% 100%;
 
-  --ring: 238 76% 65%;
+  --ring: 39 100% 55%; /* Orange, slightly brighter for dark mode */
 
   /* Chart colors - slightly brighter for dark mode */
-  --chart-1: 238 76% 65%;
-  --chart-2: 142 71% 50%;
-  --chart-3: 38 92% 55%;
-  --chart-4: 0 72% 55%;
-  --chart-5: 280 65% 65%;
+  --chart-1: 39 100% 55%; /* Orange */
+  --chart-2: 142 71% 50%; /* Green */
+  --chart-3: 38 92% 55%; /* Yellow/Orange */
+  --chart-4: 0 72% 55%; /* Red */
+  --chart-5: 280 65% 65%; /* Purple */
 
   /* Sidebar */
-  --sidebar: 222 47% 8%;
-  --sidebar-foreground: 210 40% 98%;
-  --sidebar-border: 217 33% 18%;
-  --sidebar-accent: 217 33% 14%;
-  --sidebar-accent-foreground: 210 40% 98%;
+  --sidebar: 222 47% 16%; /* #1E293B */
+  --sidebar-foreground: 0 0% 100%; /* #FFFFFF */
+  --sidebar-border: 217 33% 23%; /* #374151 */
+  --sidebar-accent: 217 33% 16%; /* #1E293B */
+  --sidebar-accent-foreground: 0 0% 100%; /* #FFFFFF */
 }
 
 @layer base {
@@ -115,7 +115,12 @@
 
   body {
     @apply bg-background text-foreground antialiased;
+    font-family: 'Poppins', sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
   }
 }
 
