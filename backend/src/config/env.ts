@@ -2,47 +2,39 @@ import { z } from "zod";
 
 /**
  * Environment variable schema with comprehensive validation
+ * Database: either DATABASE_URL (e.g. Supabase) or all POSTGRES_* (e.g. Docker).
  */
-const envSchema = z.object({
-  // Application environment
-  NODE_ENV: z
-    .enum(["development", "test", "production"])
-    .default("development")
-    .describe("Application environment"),
+const envSchema = z
+  .object({
+    // Application environment
+    NODE_ENV: z
+      .enum(["development", "test", "production"])
+      .default("development")
+      .describe("Application environment"),
 
-  // Server configuration
-  PORT: z
-    .union([z.string(), z.number()])
-    .pipe(z.coerce.number().int().positive())
-    .default(4000)
-    .describe("Backend server port"),
+    // Server configuration
+    PORT: z
+      .union([z.string(), z.number()])
+      .pipe(z.coerce.number().int().positive())
+      .default(4000)
+      .describe("Backend server port"),
 
-  // Database configuration (individual components)
-  POSTGRES_USER: z
-    .string()
-    .min(1, "PostgreSQL user is required")
-    .describe("PostgreSQL username"),
+    // Database: single URL (Supabase) or individual components (Docker)
+    DATABASE_URL: z
+      .string()
+      .min(1)
+      .optional()
+      .describe("PostgreSQL connection URI (use for Supabase)"),
 
-  POSTGRES_PASSWORD: z
-    .string()
-    .min(1, "PostgreSQL password is required")
-    .describe("PostgreSQL password"),
-
-  POSTGRES_DB: z
-    .string()
-    .min(1, "PostgreSQL database name is required")
-    .describe("PostgreSQL database name"),
-
-  POSTGRES_HOST: z
-    .string()
-    .min(1, "PostgreSQL host is required")
-    .describe("PostgreSQL host address"),
-
-  POSTGRES_PORT: z
-    .union([z.string(), z.number()])
-    .pipe(z.coerce.number().int().positive())
-    .default(5432)
-    .describe("PostgreSQL port number"),
+    POSTGRES_USER: z.string().min(1).optional().describe("PostgreSQL username"),
+    POSTGRES_PASSWORD: z.string().min(1).optional().describe("PostgreSQL password"),
+    POSTGRES_DB: z.string().min(1).optional().describe("PostgreSQL database name"),
+    POSTGRES_HOST: z.string().min(1).optional().describe("PostgreSQL host address"),
+    POSTGRES_PORT: z
+      .union([z.string(), z.number()])
+      .pipe(z.coerce.number().int().positive())
+      .optional()
+      .describe("PostgreSQL port number"),
 
   // JWT configuration
   JWT_SECRET: z
@@ -60,7 +52,20 @@ const envSchema = z.object({
     .enum(["debug", "info", "warn", "error"])
     .default("info")
     .describe("Logging level"),
-});
+  })
+  .refine(
+    (data) =>
+      !!data.DATABASE_URL ||
+      (!!data.POSTGRES_USER &&
+        !!data.POSTGRES_PASSWORD &&
+        !!data.POSTGRES_DB &&
+        !!data.POSTGRES_HOST),
+    {
+      message:
+        "Either DATABASE_URL or all of POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB, POSTGRES_HOST must be set",
+      path: ["DATABASE_URL"],
+    }
+  );
 
 /**
  * Parse and validate environment variables
@@ -91,11 +96,7 @@ Please ensure all required variables are set correctly.
 Required variables:
   - NODE_ENV: "development" | "test" | "production"
   - PORT: positive integer (default: 4000)
-  - POSTGRES_USER: non-empty string
-  - POSTGRES_PASSWORD: non-empty string
-  - POSTGRES_DB: non-empty string
-  - POSTGRES_HOST: non-empty string
-  - POSTGRES_PORT: positive integer (default: 5432)
+  - Database: either DATABASE_URL (Supabase) or all of POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB, POSTGRES_HOST, POSTGRES_PORT
   - JWT_SECRET: minimum 32 characters (for security)
   - JWT_EXPIRY: valid duration string (default: "1d")
   - LOG_LEVEL: "debug" | "info" | "warn" | "error" (default: "info")
@@ -116,8 +117,20 @@ const rawEnv = parseEnv();
  * Construct DATABASE_URL from individual PostgreSQL environment variables
  * Format: postgresql://user:password@host:port/database
  */
-function constructDatabaseUrl(env: typeof rawEnv): string {
-  return `postgresql://${env.POSTGRES_USER}:${env.POSTGRES_PASSWORD}@${env.POSTGRES_HOST}:${env.POSTGRES_PORT}/${env.POSTGRES_DB}`;
+function buildUrlFromPostgres(env: {
+  POSTGRES_USER?: string;
+  POSTGRES_PASSWORD?: string;
+  POSTGRES_HOST?: string;
+  POSTGRES_PORT?: number;
+  POSTGRES_DB?: string;
+}): string {
+  const port = env.POSTGRES_PORT ?? 5432;
+  return `postgresql://${env.POSTGRES_USER}:${env.POSTGRES_PASSWORD}@${env.POSTGRES_HOST}:${port}/${env.POSTGRES_DB}`;
+}
+
+function getDatabaseUrl(env: typeof rawEnv): string {
+  if (env.DATABASE_URL) return env.DATABASE_URL;
+  return buildUrlFromPostgres(env);
 }
 
 /**
@@ -139,8 +152,8 @@ export const config = {
     password: rawEnv.POSTGRES_PASSWORD,
     database: rawEnv.POSTGRES_DB,
     host: rawEnv.POSTGRES_HOST,
-    port: rawEnv.POSTGRES_PORT,
-    url: constructDatabaseUrl(rawEnv),
+    port: rawEnv.POSTGRES_PORT ?? 5432,
+    url: getDatabaseUrl(rawEnv),
   },
 
   // JWT

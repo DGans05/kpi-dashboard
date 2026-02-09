@@ -10,231 +10,168 @@ A comprehensive KPI (Key Performance Indicator) dashboard for restaurant managem
 - **Labour & Food KPI Tracking**: Dedicated pages for cost analysis
 - **User Management**: Admin panel for managing users and permissions
 - **Audit Logging**: Complete audit trail of all changes
-- **Export Functionality**: CSV export for reports
 - **Role-Based Access Control**: Admin, Manager, and Viewer roles
 
 ## Tech Stack
 
-### Frontend
-- Next.js 14 (App Router)
+### Frontend (Vercel)
+- Next.js 16 (App Router)
 - React 18
 - TypeScript
-- TanStack Query (React Query)
-- Zustand (State Management)
+- Convex (real-time data + auth)
 - Tailwind CSS
 - Recharts
 - React Hook Form + Zod
 
-### Backend
-- Node.js 20
-- Express.js
-- TypeScript
-- PostgreSQL 16
-- JWT Authentication (HttpOnly cookies)
+### Backend (Convex)
+- [Convex](https://convex.dev) – backend-as-a-service (database, auth, serverless functions)
+- [Convex Auth](https://labs.convex.dev/auth) – email/password only (Password provider)
+- Schema: restaurants, users (role/restaurantId), kpi_entries, kpi_targets, audit_logs
 
-### Infrastructure
-- Docker & Docker Compose
-- Nginx (Production)
+The `backend/` folder is legacy Express + PostgreSQL and is not used; all data and auth go through Convex.
 
 ## Prerequisites
 
-- [Docker](https://www.docker.com/products/docker-desktop) (v20+)
-- [Docker Compose](https://docs.docker.com/compose/) (v2+)
-- [Node.js](https://nodejs.org/) (v20+ for local development)
-- [Git](https://git-scm.com/)
+- [Node.js](https://nodejs.org/) (v20+)
+- [Convex](https://convex.dev) account (free tier available)
+- [Vercel](https://vercel.com) account (for frontend deployment)
 
 ## Quick Start
 
-### 1. Clone the Repository
+### 1. Clone and install
 
 ```bash
 git clone <repository-url>
-cd kpi-dashboard
+cd kpi-dashboard/frontend
+npm install
 ```
 
-### 2. Environment Setup
+### 2. Convex setup
 
-Copy the example environment file:
+Link the app to a Convex project (creates `.env.local` with `NEXT_PUBLIC_CONVEX_URL`):
 
 ```bash
-cp .env.example .env
+npx convex dev
 ```
 
-The default `.env` file is pre-configured for local development.
+When prompted, sign in to Convex and create or link a project. Leave `npx convex dev` running in one terminal so the Convex backend stays in sync.
 
-### 3. Start with Docker
+### 3. Convex Auth (JWT keys) — required for login/register
+
+Convex Auth needs `JWT_PRIVATE_KEY` and `JWKS` in the **Convex deployment** (not in `.env.local`). Without them you’ll see: `Missing environment variable JWT_PRIVATE_KEY`.
+
+1. From the project root, run:
+   ```bash
+   cd frontend && node scripts/generate-auth-keys.mjs
+   ```
+2. Open [Convex Dashboard](https://dashboard.convex.dev) → your project → **Settings** → **Environment Variables**.
+3. Add these variables (copy the exact values from the script output):
+   - **`JWT_PRIVATE_KEY`** — the full PEM string (single line, in quotes).
+   - **`JWKS`** — the JSON string (single line).
+   - **`CONVEX_SITE_URL`** — your Convex site URL, e.g. `https://your-deployment.convex.site` (find it in Convex Dashboard → Settings → URL, or use the same host as your deployment).
+4. Save. Convex will redeploy; then try **Login** or **Register** again.
+
+### 4. Seed data (optional)
+
+Create initial restaurants and KPI targets:
 
 ```bash
-# Build and start all services
-docker-compose up -d
-
-# View logs
-docker-compose logs -f
+npx convex run seed:run
 ```
 
-### 4. Access the Application
+### 5. Run the frontend
 
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:4000
-- **Health Check**: http://localhost:4000/health
-
-### 5. Default Admin Account
-
-```
-Email: admin@kpi.com
-Password: password123
-```
-
-> ⚠️ **Important**: Change the default admin password immediately in production!
-
-## Local Development
-
-### Frontend
+In another terminal:
 
 ```bash
 cd frontend
-npm install
 npm run dev
 ```
 
-### Backend
+Open [http://localhost:3000](http://localhost:3000).
 
-```bash
-cd backend
-npm install
-npm run dev
-```
+### 6. First user (admin)
 
-### Database
-
-The PostgreSQL database is automatically initialized with:
-- Schema (`database/init.sql`)
-- Seed data (`database/seed.sql`)
-
-To reset the database:
-
-```bash
-docker-compose down -v
-docker-compose up -d
-```
+1. Go to **Register** and create an account (email + password).
+2. In the [Convex Dashboard](https://dashboard.convex.dev) → **Data** → **users**, open your user document.
+3. Set `role` to `"admin"` and save.
+4. Refresh the app; you’ll have admin access (users, restaurants, audit).
 
 ## Environment Variables
 
-### Required Variables
+### Frontend (Vercel / local)
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `POSTGRES_USER` | Database username | `kpiuser` |
-| `POSTGRES_PASSWORD` | Database password | `secure_password` |
-| `POSTGRES_DB` | Database name | `kpi_dashboard` |
-| `JWT_SECRET` | JWT signing secret (32+ chars) | Random string |
-| `FRONTEND_URL` | Frontend URL for CORS | `http://localhost:3000` |
+| Variable | Description |
+|----------|-------------|
+| `NEXT_PUBLIC_CONVEX_URL` | Convex deployment URL (set by `npx convex dev` or in Vercel) |
 
-### Optional Variables
+Copy `frontend/.env.local.example` to `frontend/.env.local` and fill in the Convex URL if not using `npx convex dev` to generate it.
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `NODE_ENV` | Environment mode | `development` |
-| `BACKEND_PORT` | Backend server port | `4000` |
-| `LOG_LEVEL` | Logging verbosity | `debug` |
-| `JWT_EXPIRY` | JWT token expiry | `7d` |
+### Convex (backend) — required for auth
 
-## API Endpoints
+Set these in [Convex Dashboard](https://dashboard.convex.dev) → your project → **Settings** → **Environment Variables**:
 
-### Authentication
-- `POST /api/auth/login` - User login
-- `POST /api/auth/logout` - User logout
-- `GET /api/auth/me` - Get current user
+| Variable | Description |
+|----------|-------------|
+| `JWT_PRIVATE_KEY` | RSA private key (PEM) for signing JWTs. Generate with `node frontend/scripts/generate-auth-keys.mjs`. |
+| `JWKS` | JSON Web Key Set (public key). Output of the same script. |
+| `CONVEX_SITE_URL` | Your Convex site URL (e.g. `https://your-deployment.convex.site`). |
 
-### KPI Entries
-- `GET /api/kpi/entries` - List entries
-- `POST /api/kpi/entries` - Create entry
-- `PATCH /api/kpi/entries/:id` - Update entry
-- `DELETE /api/kpi/entries/:id` - Delete entry
+## Deployment
 
-### Dashboard
-- `GET /api/kpi/dashboard` - Dashboard summary
-- `GET /api/kpi/aggregated` - Aggregated data
+### Vercel (frontend)
 
-### Admin (Admin only)
-- `GET /api/users` - List users
-- `POST /api/users` - Create user
-- `PATCH /api/users/:id` - Update user
-- `DELETE /api/users/:id` - Delete user
-- `GET /api/restaurants` - List restaurants
-- `GET /api/audit` - Audit logs
+1. Push your code to GitHub and import the repo in [Vercel](https://vercel.com).
+2. Set **Root Directory** to `frontend`.
+3. Add environment variable: `NEXT_PUBLIC_CONVEX_URL` = your Convex deployment URL (from Convex dashboard → Settings → URL).
+4. Deploy. The app will use Convex for all data and auth.
 
-### Reports
-- `GET /api/reports/kpi/export` - Export KPI data
+### Convex (backend)
 
-## User Roles
-
-| Role | Capabilities |
-|------|-------------|
-| **Admin** | Full access, user management, audit logs |
-| **Manager** | CRUD KPI entries for assigned restaurant |
-| **Viewer** | Read-only access to assigned restaurant |
-
-## Production Deployment
-
-1. Copy and configure production environment:
-   ```bash
-   cp .env.production.example .env.production
-   ```
-
-2. Update all secrets and URLs in `.env.production`
-
-3. Deploy with production compose:
-   ```bash
-   docker-compose -f docker-compose.prod.yml up -d
-   ```
-
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed production deployment instructions.
+- **Development**: `npx convex dev` pushes to your dev deployment.
+- **Production**: `npx convex deploy` (or enable Convex’s GitHub integration) deploys functions to production.
+- Use the same Convex project for dev and prod, or separate projects and set `NEXT_PUBLIC_CONVEX_URL` per environment.
 
 ## Project Structure
 
 ```
 kpi-dashboard/
-├── frontend/               # Next.js frontend
-│   ├── app/               # App router pages
-│   ├── components/        # React components
-│   └── lib/               # Utilities, hooks, API clients
-├── backend/               # Express.js backend
-│   └── src/
-│       ├── controllers/   # HTTP handlers
-│       ├── services/      # Business logic
-│       ├── repositories/  # Database operations
-│       ├── middleware/    # Express middleware
-│       └── routes/        # Route definitions
-├── database/              # SQL schema and seeds
-└── docker-compose.yml     # Docker orchestration
+├── frontend/                 # Next.js app (Vercel)
+│   ├── app/                  # App Router pages
+│   ├── components/
+│   ├── convex/               # Convex backend
+│   │   ├── schema.ts         # Data model
+│   │   ├── auth.ts           # Convex Auth (Password)
+│   │   ├── users.ts          # getCurrentUser
+│   │   ├── restaurants.ts    # CRUD restaurants
+│   │   ├── kpi.ts            # KPI entries, dashboard, aggregated
+│   │   ├── usersAdmin.ts     # Admin: list/update users
+│   │   ├── audit.ts          # Audit logs
+│   │   └── seed.ts           # Seed restaurants + targets
+│   └── lib/                  # Hooks, store, UI utils
+├── backend/                  # Legacy Express API (optional)
+└── database/                 # Legacy SQL schema (reference)
 ```
+
+## User Roles
+
+| Role | Capabilities |
+|------|--------------|
+| **Admin** | Full access, user management, audit logs, all restaurants |
+| **Manager** | CRUD KPI entries for assigned restaurant only |
+| **Viewer** | Read-only access to assigned restaurant |
 
 ## Troubleshooting
 
-### Backend not connecting to database
+- **"No CONVEX_DEPLOYMENT set"**  
+  Run `npx convex dev` from the `frontend` directory and complete the Convex login/link flow.
 
-Wait for PostgreSQL to be healthy:
-```bash
-docker-compose logs postgres
-```
+- **Missing `_generated`**  
+  Convex generates `frontend/convex/_generated/` when you run `npx convex dev`. The app will not build until this exists.
 
-### CORS errors
-
-Ensure `FRONTEND_URL` in backend matches your frontend URL.
-
-### Cookie not being set
-
-Check that cookies are configured with correct `sameSite` and `secure` flags for your environment.
+- **Auth / 401**  
+  Ensure Convex Auth is configured (`frontend/convex/auth.ts`) and the middleware is active (`frontend/middleware.ts`). For local dev, use the same origin or ensure cookies are allowed for your Convex URL.
 
 ## License
 
 MIT
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run tests and linting
-5. Submit a pull request

@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Pencil, Trash2, Search, MapPin, Users } from 'lucide-react';
-import type { Restaurant } from '@/lib/api/restaurants';
+import { Pencil, Trash2, Search, MapPin } from 'lucide-react';
+import type { Restaurant } from '@/lib/hooks/useRestaurants';
 
 interface RestaurantTableProps {
   restaurants: Restaurant[];
@@ -44,7 +44,6 @@ export function RestaurantTable({ restaurants, isLoading, onEdit, onDelete }: Re
                 <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400">Name</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400">City</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400">Timezone</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400">Managers</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400">Status</th>
                 <th className="px-4 py-3 text-right text-xs font-semibold text-slate-400">Actions</th>
               </tr>
@@ -55,7 +54,6 @@ export function RestaurantTable({ restaurants, isLoading, onEdit, onDelete }: Re
                   <td className="px-4 py-4"><div className="h-4 w-32 bg-slate-800 rounded animate-pulse" /></td>
                   <td className="px-4 py-4"><div className="h-4 w-24 bg-slate-800 rounded animate-pulse" /></td>
                   <td className="px-4 py-4"><div className="h-4 w-20 bg-slate-800 rounded animate-pulse" /></td>
-                  <td className="px-4 py-4"><div className="h-4 w-8 bg-slate-800 rounded animate-pulse" /></td>
                   <td className="px-4 py-4"><div className="h-4 w-12 bg-slate-800 rounded animate-pulse" /></td>
                   <td className="px-4 py-4"><div className="h-4 w-16 ml-auto bg-slate-800 rounded animate-pulse" /></td>
                 </tr>
@@ -99,9 +97,6 @@ export function RestaurantTable({ restaurants, isLoading, onEdit, onDelete }: Re
                   Timezone
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
-                  Managers
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
                   Status
                 </th>
                 <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-400">
@@ -136,12 +131,6 @@ export function RestaurantTable({ restaurants, isLoading, onEdit, onDelete }: Re
                     <td className="px-4 py-3 text-sm text-slate-400">
                       {restaurant.timezone || 'UTC'}
                     </td>
-                    <td className="px-4 py-3 text-sm text-slate-300">
-                      <span className="inline-flex items-center gap-1.5">
-                        <Users className="h-3.5 w-3.5 text-slate-500" />
-                        {restaurant.managerCount ?? 0}
-                      </span>
-                    </td>
                     <td className="px-4 py-3">
                       <span
                         className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
@@ -167,13 +156,8 @@ export function RestaurantTable({ restaurants, isLoading, onEdit, onDelete }: Re
                         {onDelete && (
                           <button
                             onClick={() => handleDeleteClick(restaurant)}
-                            disabled={(restaurant.managerCount ?? 0) > 0}
-                            className="rounded-lg p-2 text-slate-400 hover:bg-rose-500/20 hover:text-rose-400 transition disabled:opacity-40 disabled:cursor-not-allowed"
-                            title={
-                              (restaurant.managerCount ?? 0) > 0
-                                ? 'Cannot delete: has assigned managers'
-                                : 'Delete restaurant'
-                            }
+                            className="rounded-lg p-2 text-slate-400 hover:bg-rose-500/20 hover:text-rose-400 transition"
+                            title="Delete restaurant"
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>

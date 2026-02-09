@@ -1,76 +1,108 @@
 /**
- * Restaurant Hooks
- * TanStack Query hooks for restaurant management
+ * Restaurant Hooks – Convex backend
  */
 
-'use client';
+"use client";
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import * as restaurantsApi from '../api/restaurants';
-import type { CreateRestaurantDTO, UpdateRestaurantDTO } from '../api/restaurants';
+import { useState, useCallback } from "react";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 
-/**
- * Hook to fetch all restaurants
- */
-export function useRestaurants() {
-  return useQuery({
-    queryKey: ['restaurants'],
-    queryFn: restaurantsApi.getRestaurants,
-    staleTime: 60000, // 1 minute
-  });
+export type Restaurant = {
+  id: string;
+  name: string;
+  city: string;
+  timezone: string;
+  isActive: boolean;
+  createdAt: string;
+};
+
+export type CreateRestaurantDTO = { name: string; city?: string; timezone?: string };
+export type UpdateRestaurantDTO = { name?: string; city?: string; timezone?: string; isActive?: boolean };
+
+export function useRestaurants(): {
+  data: Restaurant[];
+  isLoading: boolean;
+  error: null;
+  refetch: () => void;
+} {
+  const list = useQuery(api.restaurants.list);
+  const data: Restaurant[] = Array.isArray(list) ? list : [];
+  return {
+    data,
+    isLoading: list === undefined,
+    error: null,
+    refetch: () => {},
+  };
 }
 
-/**
- * Hook to fetch single restaurant
- */
 export function useRestaurant(id: string | undefined) {
-  return useQuery({
-    queryKey: ['restaurants', id],
-    queryFn: () => restaurantsApi.getRestaurant(id!),
-    enabled: !!id,
-  });
+  const r = useQuery(api.restaurants.get, id ? { id: id as Id<"restaurants"> } : "skip");
+  return {
+    data: r ?? undefined,
+    isLoading: !!id && r === undefined,
+    error: null,
+  };
 }
 
-/**
- * Hook to create restaurant
- */
 export function useCreateRestaurant() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (data: CreateRestaurantDTO) => restaurantsApi.createRestaurant(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['restaurants'] });
+  const create = useMutation(api.restaurants.create);
+  const [isPending, setIsPending] = useState(false);
+  const mutateAsync = useCallback(
+    async (data: CreateRestaurantDTO) => {
+      setIsPending(true);
+      try {
+        return await create({
+          name: data.name,
+          city: data.city,
+          timezone: data.timezone,
+        });
+      } finally {
+        setIsPending(false);
+      }
     },
-  });
+    [create]
+  );
+  return { mutateAsync, isPending, error: null as Error | null };
 }
 
-/**
- * Hook to update restaurant
- */
 export function useUpdateRestaurant() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateRestaurantDTO }) =>
-      restaurantsApi.updateRestaurant(id, data),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['restaurants', variables.id] });
-      queryClient.invalidateQueries({ queryKey: ['restaurants'] });
+  const update = useMutation(api.restaurants.update);
+  const [isPending, setIsPending] = useState(false);
+  const mutateAsync = useCallback(
+    async ({ id, data }: { id: string; data: UpdateRestaurantDTO }) => {
+      setIsPending(true);
+      try {
+        return await update({
+          id: id as Id<"restaurants">,
+          name: data.name,
+          city: data.city,
+          timezone: data.timezone,
+          isActive: data.isActive,
+        });
+      } finally {
+        setIsPending(false);
+      }
     },
-  });
+    [update]
+  );
+  return { mutateAsync, isPending, error: null as Error | null };
 }
 
-/**
- * Hook to delete restaurant
- */
 export function useDeleteRestaurant() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (id: string) => restaurantsApi.deleteRestaurant(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['restaurants'] });
+  const remove = useMutation(api.restaurants.remove);
+  const [isPending, setIsPending] = useState(false);
+  const mutateAsync = useCallback(
+    async (id: string) => {
+      setIsPending(true);
+      try {
+        return await remove({ id: id as Id<"restaurants"> });
+      } finally {
+        setIsPending(false);
+      }
     },
-  });
+    [remove]
+  );
+  return { mutateAsync, isPending, error: null as Error | null };
 }

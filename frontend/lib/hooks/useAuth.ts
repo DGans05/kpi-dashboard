@@ -1,135 +1,130 @@
 "use client";
 
-import { useEffect, useMemo, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useQuery } from "convex/react";
+import { useAuthActions } from "@convex-dev/auth/react";
+import { api } from "@/convex/_generated/api";
+import { useAuthStore, type User } from "../store/authStore";
 
-import { login as apiLogin, getCurrentUser, type LoginResponse } from '../api/auth';
-import { ApiError } from '../api/client';
-import { useAuthStore } from '../store/authStore';
-
-// Hook: useLogin
 export function useLogin() {
   const setUser = useAuthStore((state) => state.setUser);
   const [error, setError] = useState<string | null>(null);
+  const { signIn } = useAuthActions();
 
-  const { mutateAsync, isPending } = useMutation({
-    mutationFn: (params: { email: string; password: string }) =>
-      apiLogin(params.email, params.password),
-    onSuccess: (data: LoginResponse) => {
-      setError(null);
-      setUser(data.user);
-    },
-    onError: (err: unknown) => {
-      if (err instanceof ApiError) {
-        setError(err.message);
-      } else if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('Login failed. Please try again.');
-      }
-    },
-  });
-
-  const login = (email: string, password: string) =>
-    mutateAsync({ email, password });
-
-  return {
-    login,
-    isLoading: isPending,
-    error,
+  const login = async (email: string, password: string) => {
+    setError(null);
+    try {
+      await signIn("password", { flow: "signIn", email, password });
+    } catch (err) {
+      const raw = err instanceof Error ? err.message : "Invalid credentials";
+      const message =
+        raw === "InvalidAccountId"
+          ? "No account with this email. Please register first."
+          : raw === "InvalidSecret"
+            ? "Invalid password."
+            : raw;
+      setError(message);
+      throw err;
+    }
   };
+
+  return { login, isLoading: false, error };
 }
 
-// Hook: useLogout
+export function useRegister() {
+  const setUser = useAuthStore((state) => state.setUser);
+  const [error, setError] = useState<string | null>(null);
+  const { signIn } = useAuthActions();
+
+  const register = async (email: string, password: string, fullName?: string) => {
+    setError(null);
+    try {
+      await signIn("password", {
+        flow: "signUp",
+        email,
+        password,
+        name: fullName ?? email.split("@")[0],
+      });
+    } catch (err) {
+      const raw = err instanceof Error ? err.message : "Registration failed";
+      const message =
+        raw === "InvalidAccountId"
+          ? "An account with this email already exists. Sign in instead."
+          : raw;
+      setError(message);
+      throw err;
+    }
+  };
+
+  return { register, isLoading: false, error };
+}
+
 export function useLogout() {
   const router = useRouter();
-  const storeLogout = useAuthStore((state) => state.logout);
+  const setUser = useAuthStore((state) => state.setUser);
+  const { signOut } = useAuthActions();
 
-  const { mutateAsync, isPending } = useMutation({
-    mutationFn: async () => {
-      // Ensure backend logout is called and local state is cleared
-      // storeLogout already calls the API logout under the hood.
-      await storeLogout();
-    },
-    onSuccess: () => {
-      router.push('/login');
-    },
-  });
-
-  const logout = () => mutateAsync();
-
-  return {
-    logout,
-    isLoading: isPending,
+  const logout = async () => {
+    await signOut();
+    setUser(null);
+    router.push("/login");
   };
+
+  return { logout, isLoading: false };
 }
 
-// Hook: useCurrentUser
 export function useCurrentUser() {
   const router = useRouter();
-  const user = useAuthStore((state) => state.user);
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const userFromStore = useAuthStore((state) => state.user);
   const setUser = useAuthStore((state) => state.setUser);
   const setLoading = useAuthStore((state) => state.setLoading);
-  const storeIsLoading = useAuthStore((state) => state.isLoading);
-
-  const {
-    data,
-    isPending,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ['auth', 'me'],
-    queryFn: getCurrentUser,
-    enabled: isAuthenticated,
-    retry: false,
-  });
+  const data = useQuery(api.users.getCurrentUser);
+  const isLoading = data === undefined;
 
   useEffect(() => {
-    if (storeIsLoading !== isPending) {
-      setLoading(isPending);
+    setLoading(isLoading);
+  }, [isLoading, setLoading]);
+
+  useEffect(() => {
+    if (data !== undefined) {
+      setUser(
+        data && typeof data === "object" && "id" in data && "role" in data
+          ? (data as User)
+          : null
+      );
     }
-  }, [isPending, storeIsLoading]);
+  }, [data, setUser]);
 
   useEffect(() => {
-    if (data) {
-      setUser(data);
-    }
-  }, [data]);
-
-  useEffect(() => {
-    if (!error) return;
-
-    if (error instanceof ApiError && error.status === 401) {
-      // Unauthorized – clear auth state and redirect to login
+    if (data === null && !isLoading) {
       setUser(null);
-      router.push('/login');
     }
-  }, [error, router]);
+  }, [data, isLoading, setUser]);
+
+  const raw = data ?? userFromStore;
+  const user: User | null =
+    raw && typeof raw === "object" && "id" in raw && "role" in raw
+      ? (raw as User)
+      : null;
 
   return {
-    user: data ?? user,
-    isLoading: isPending,
-    error,
-    refetch,
+    user,
+    isLoading,
+    error: null,
+    refetch: () => {},
   };
 }
 
-// Hook: useAuthGuard
-export function useAuthGuard(requiredRoles?: Array<'admin' | 'manager' | 'viewer'>) {
+export function useAuthGuard(requiredRoles?: Array<"admin" | "manager" | "viewer">) {
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const isLoading = useAuthStore((state) => state.isLoading);
 
-  const requiredRolesKey = useMemo(
-    () => (requiredRoles ? requiredRoles.join('|') : ''),
-    [requiredRoles],
-  );
   const requiredRolesSet = useMemo(
     () => new Set(requiredRoles ?? []),
-    [requiredRolesKey],
+    [requiredRoles?.join("|") ?? ""]
   );
 
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -138,14 +133,13 @@ export function useAuthGuard(requiredRoles?: Array<'admin' | 'manager' | 'viewer
     if (isLoading) return;
 
     if (!isAuthenticated) {
-      router.push('/login');
+      router.push("/login");
       setIsAuthorized(false);
       return;
     }
 
     if (requiredRolesSet.size > 0) {
       if (!user || !requiredRolesSet.has(user.role)) {
-        // Authenticated but wrong role – do not redirect, mark unauthorized
         setIsAuthorized(false);
         return;
       }
@@ -161,4 +155,3 @@ export function useAuthGuard(requiredRoles?: Array<'admin' | 'manager' | 'viewer
     isLoading: guardLoading,
   };
 }
-

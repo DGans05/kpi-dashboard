@@ -5,7 +5,7 @@ import { Pencil, Trash2, FileSpreadsheet } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import type { KPIEntry } from '@/lib/api/kpi';
+import type { KPIEntry } from '@/lib/hooks/useKPI';
 
 interface KPITableProps {
   entries: KPIEntry[];

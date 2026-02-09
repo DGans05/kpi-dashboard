@@ -1,9 +1,21 @@
 "use client";
 
-import { create } from 'zustand';
-import { devtools, persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { devtools, persist } from "zustand/middleware";
 
-import { type User, logout as apiLogout } from '../api/auth';
+export interface User {
+  id: string;
+  email: string;
+  fullName: string | null;
+  role: "admin" | "manager" | "viewer";
+  restaurantId: string | null;
+  isActive: boolean;
+  restaurant?: {
+    id: string;
+    name: string;
+    city: string;
+  };
+}
 
 export interface AuthState {
   user: User | null;
@@ -34,28 +46,20 @@ export const useAuthStore = create<AuthState>()(
           }),
 
         logout: async () => {
-          // Optimistically set loading while logging out
           set({ isLoading: true });
-          try {
-            await apiLogout();
-          } finally {
-            set({
-              user: null,
-              isAuthenticated: false,
-              isLoading: false,
-            });
-          }
+          set({
+            user: null,
+            isAuthenticated: false,
+            isLoading: false,
+          });
         },
       }),
       {
-        name: 'auth-store',
-        // Only persist the user object; derived flags are recomputed
-        partialize: (state) => ({
-          user: state.user,
-        }),
-      },
+        name: "auth-store",
+        partialize: (state) => ({ user: state.user }),
+      }
     ),
-    { enabled: process.env.NODE_ENV !== 'production' },
-  ),
+    { enabled: process.env.NODE_ENV !== "production" }
+  )
 );
 

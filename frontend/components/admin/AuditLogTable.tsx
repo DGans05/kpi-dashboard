@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { ChevronDown, ChevronRight, Plus, Pencil, Trash2 } from 'lucide-react';
-import type { AuditLog } from '@/lib/api/audit';
+import type { AuditLog } from '@/lib/hooks/useAudit';
 
 interface AuditLogTableProps {
   logs: AuditLog[];
@@ -142,7 +142,7 @@ export function AuditLogTable({ logs, isLoading }: AuditLogTableProps) {
                         {formatTimestamp(log.createdAt)}
                       </td>
                       <td className="px-4 py-3 text-sm text-slate-200">
-                        {log.user?.fullName || log.user?.email || log.userId.slice(0, 8)}
+                        {log.user?.fullName || log.user?.email || (log.userId ?? '').slice(0, 8)}
                       </td>
                       <td className="px-4 py-3">
                         <span
@@ -156,7 +156,7 @@ export function AuditLogTable({ logs, isLoading }: AuditLogTableProps) {
                         {log.resourceType}
                       </td>
                       <td className="px-4 py-3 text-sm text-slate-400 font-mono">
-                        {log.resourceId.slice(0, 8)}...
+                        {(log.resourceId ?? '').slice(0, 8)}...
                       </td>
                     </tr>
                     {isExpanded && (

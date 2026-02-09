@@ -1,0 +1,11 @@
+# Override to run with Supabase instead of local Postgres.
+# Usage: docker compose -f docker-compose.yml -f docker-compose.supabase.yml up
+# Ensure .env has DATABASE_URL set to your Supabase connection string.
+
+services:
+  backend:
+    depends_on: []
+
+  postgres:
+    profiles:
+      - with-local-db

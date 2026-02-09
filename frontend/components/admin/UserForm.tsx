@@ -5,8 +5,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useCreateUser, useUpdateUser } from '@/lib/hooks/useUsers';
-import type { User } from '@/lib/api/users';
-import type { Restaurant } from '@/lib/api/restaurants';
+import type { User } from '@/lib/hooks/useUsers';
+import type { Restaurant } from '@/lib/hooks/useRestaurants';
 
 // Schema that works for both create and update
 const userFormSchema = z.object({

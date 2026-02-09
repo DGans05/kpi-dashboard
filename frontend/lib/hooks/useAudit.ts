@@ -1,32 +1,47 @@
 /**
- * Audit Hooks
- * TanStack Query hooks for audit logs
+ * Audit Hooks – Convex backend
  */
 
-'use client';
+"use client";
 
-import { useQuery } from '@tanstack/react-query';
-import * as auditApi from '../api/audit';
-import type { AuditFilters } from '../api/audit';
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
-/**
- * Hook to fetch audit logs
- */
+export type AuditFilters = {
+  userId?: string;
+  resourceType?: string;
+  startDate?: string;
+  endDate?: string;
+  limit?: number;
+};
+
+export type AuditLog = {
+  id: string;
+  userId?: string;
+  action: string;
+  resourceType: string;
+  resourceId?: string;
+  changes?: unknown;
+  ipAddress?: string | null;
+  userAgent?: string | null;
+  createdAt: string;
+  user?: { id: string; email: string; fullName: string | null };
+};
+
 export function useAuditLogs(filters?: AuditFilters) {
-  return useQuery({
-    queryKey: ['audit', filters],
-    queryFn: () => auditApi.getAuditLogs(filters),
-    staleTime: 30000, // 30 seconds
+  const logs = useQuery(api.audit.list, {
+    limit: filters?.limit,
+    resourceType: filters?.resourceType,
+    userId: filters?.userId,
   });
+  const data: AuditLog[] = Array.isArray(logs) ? logs : [];
+  return {
+    data,
+    isLoading: logs === undefined,
+    error: null,
+  };
 }
 
-/**
- * Hook to fetch audit logs for specific resource
- */
-export function useResourceAuditLogs(resourceType: string, resourceId: string) {
-  return useQuery({
-    queryKey: ['audit', resourceType, resourceId],
-    queryFn: () => auditApi.getResourceAuditLogs(resourceType, resourceId),
-    enabled: !!resourceType && !!resourceId,
-  });
+export function useResourceAuditLogs(_resourceType: string, _resourceId: string) {
+  return useAuditLogs({ limit: 50 });
 }

@@ -45,8 +45,8 @@ Full-stack restaurant KPI tracking dashboard (TypeScript)
 | Frontend | Next.js 14 (App Router), React 18, TanStack Query, Zustand, Tailwind CSS |
 | Backend | Express.js, Node.js 20, TypeScript |
 | Database | PostgreSQL 16 |
-| Auth | JWT in HttpOnly cookies |
-| Infrastructure | Docker Compose, Nginx |
+| Auth | WorkOS AuthKit (Next.js) + Convex custom JWT (WorkOS JWKS) |
+| Infrastructure | Docker Compose, Nginx; Convex cloud for frontend data |
 
 ## Architecture Pattern
 
@@ -59,10 +59,15 @@ Backend:  Routes → Controllers → Services → Repositories → PostgreSQL
 
 ```
 frontend/
-├── app/                    # Next.js pages (App Router)
+├── app/
+│   ├── api/auth/[...workos]/  # WorkOS handleAuth (callback)
+│   ├── callback/              # Post-login redirect page
+│   └── ...                    # Next.js pages (App Router)
 ├── components/             # React components
+├── convex/                 # Convex backend (schema, auth.config.ts, functions)
 └── lib/
     ├── api/               # API client (client.ts is base)
+    ├── auth-actions.ts    # WorkOS signIn/signUp server actions
     ├── hooks/             # TanStack Query hooks
     └── store/             # Zustand stores
 
@@ -84,7 +89,10 @@ database/
 |---------|------|
 | Backend entry | `backend/src/server.ts` |
 | DB connection | `backend/src/config/database.ts` |
-| Auth middleware | `backend/src/middleware/auth.ts` |
+| Auth middleware | `backend/src/middleware/auth.ts` (Express); `frontend/middleware.ts` (authkitMiddleware) |
+| WorkOS auth route | `frontend/app/api/auth/[...workos]/route.ts` |
+| WorkOS server actions | `frontend/lib/auth-actions.ts` (signInAction, signUpAction) |
+| Convex WorkOS JWT | `frontend/convex/auth.config.ts` |
 | API base client | `frontend/lib/api/client.ts` |
 | Auth store | `frontend/lib/store/authStore.ts` |
 | Query provider | `frontend/lib/providers/QueryProvider.tsx` |
@@ -113,18 +121,22 @@ Users:   /api/users (admin only)
 Reports: /api/reports/kpi/export
 ```
 
-## Auth Flow
+## Auth Flow (WorkOS + Convex)
 
-1. Login → JWT set as HttpOnly cookie
-2. Requests include cookie automatically (`credentials: 'include'`)
-3. `auth.ts` middleware verifies JWT, populates `req.user`
-4. `authorize.ts` enforces role-based access
+1. **Login/Register**: User clicks "Sign in" or "Create account" → server action calls `getSignInUrl()` / `getSignUpUrl()` → redirect to WorkOS.
+2. **Callback**: WorkOS redirects to `NEXT_PUBLIC_WORKOS_REDIRECT_URI` (e.g. `http://localhost:3000/api/auth/callback`) with `?code=...`.
+3. **Handle auth**: `app/api/auth/[...workos]/route.ts` exports `GET = handleAuth({ returnPathname: '/dashboard' })`; it exchanges code, saves session (cookie), redirects to `/dashboard`.
+4. **Protected routes**: `middleware.ts` uses `authkitMiddleware()`; matcher excludes `/login`, `/register`, `/callback`, `api/auth`, `_next/*`, `favicon.ico`.
+5. **Convex**: `convex/auth.config.ts` configures WorkOS as custom JWT provider (JWKS) so Convex can verify WorkOS tokens when frontend calls Convex with auth.
+6. **User in app**: Use `getUser()` from `@workos-inc/authkit-nextjs` in server components; sign out via `signOut({ returnTo })`.
 
 ## Environment Variables
 
-Required: `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, `JWT_SECRET`, `FRONTEND_URL`
+**Frontend (Next.js + WorkOS):** `NEXT_PUBLIC_CONVEX_URL`, `WORKOS_API_KEY`, `WORKOS_CLIENT_ID`, `WORKOS_COOKIE_PASSWORD` (32+ chars), `NEXT_PUBLIC_WORKOS_REDIRECT_URI` (e.g. `http://localhost:3000/api/auth/callback`). Redirect URI must match WorkOS dashboard and point at the route that runs `handleAuth()`.
 
-See `.env.example` for full list.
+**Convex:** When running `npx convex dev` from frontend, set `WORKOS_CLIENT_ID` (same as frontend) so `convex/auth.config.ts` can verify WorkOS JWTs.
+
+**Backend (Express/PostgreSQL):** `POSTGRES_*`, `JWT_SECRET`, `FRONTEND_URL`. See `.env.example` for full list.
 
 ## Running the App
 
@@ -168,6 +180,13 @@ docker-compose up -d          # Start all services
 - All API endpoints verified working (auth, KPI, users, restaurants, audit, health)
 - Test credentials: admin@kpi.com / password123
 - **Status: ✅ All systems operational, no issues remaining**
+
+### WorkOS + Convex Auth (2026-02-02)
+- Switched frontend auth from Express JWT + Convex Password to **WorkOS AuthKit** (Next.js).
+- **New/updated:** `@workos-inc/authkit-nextjs`; `app/api/auth/[...workos]/route.ts` (handleAuth, returnPathname `/dashboard`); `app/callback/page.tsx`; `lib/auth-actions.ts` (signInAction, signUpAction using getSignInUrl/getSignUpUrl); `middleware.ts` (authkitMiddleware, matcher excludes login/register/callback/api/auth); `convex/auth.config.ts` (WorkOS custom JWT providers for Convex).
+- **Env:** `WORKOS_API_KEY`, `WORKOS_CLIENT_ID`, `WORKOS_COOKIE_PASSWORD`, `NEXT_PUBLIC_WORKOS_REDIRECT_URI` (use `/api/auth/callback` so handleAuth receives the code). Convex needs `WORKOS_CLIENT_ID` when running `npx convex dev`.
+- **Login/Register pages:** Single "Sign in with WorkOS" / "Create account with WorkOS" buttons; forms submit to server actions that redirect to WorkOS.
+- **Flow:** Click sign in/up → redirect to WorkOS → redirect to `/api/auth/callback?code=...` → handleAuth exchanges code, sets cookie, redirects to `/dashboard`. Middleware protects non-public routes.
 
 ## README Quick Reference
 
@@ -221,4 +240,4 @@ docker-compose ps             # Check service status
 - `ENV_CONFIGURATION.md` - Environment setup guide
 
 ---
-*Last updated: 2026-01-31*
+*Last updated: 2026-02-02*

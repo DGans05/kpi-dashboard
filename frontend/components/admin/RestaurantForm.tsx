@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useCreateRestaurant, useUpdateRestaurant } from '@/lib/hooks/useRestaurants';
-import type { Restaurant } from '@/lib/api/restaurants';
+import type { Restaurant } from '@/lib/hooks/useRestaurants';
 
 const restaurantSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100),

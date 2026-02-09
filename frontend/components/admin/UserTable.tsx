@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Pencil, Trash2, Search, Shield, User as UserIcon, Eye } from 'lucide-react';
-import type { User } from '@/lib/api/users';
+import type { User } from '@/lib/hooks/useUsers';
 import { formatDate } from '@/lib/utils/formatters';
 import { cn } from '@/lib/utils';
 

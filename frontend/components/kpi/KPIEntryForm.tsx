@@ -8,7 +8,7 @@ import { useCreateKPIEntry, useUpdateKPIEntry } from '@/lib/hooks/useKPI';
 import { useAuthStore } from '@/lib/store/authStore';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import type { KPIEntry } from '@/lib/api/kpi';
+import type { KPIEntry } from '@/lib/hooks/useKPI';
 
 const kpiEntrySchema = z.object({
   restaurantId: z.string().min(1, 'Restaurant is required'),

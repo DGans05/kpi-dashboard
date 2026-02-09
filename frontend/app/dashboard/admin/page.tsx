@@ -17,8 +17,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { getDateRange } from '@/lib/utils/date';
 import { cn } from '@/lib/utils';
-import type { User } from '@/lib/api/users';
-import type { Restaurant } from '@/lib/api/restaurants';
+import type { User } from '@/lib/hooks/useUsers';
+import type { Restaurant } from '@/lib/hooks/useRestaurants';
 
 type Tab = 'users' | 'restaurants' | 'audit';
 

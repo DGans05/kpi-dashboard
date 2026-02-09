@@ -13,11 +13,15 @@ export function initializePool(): Pool {
     throw new Error('DATABASE_URL is not configured');
   }
 
+  const isSupabase = databaseUrl.includes('supabase.co');
   pool = new Pool({
     connectionString: databaseUrl,
     max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 5000,
+    ...(isSupabase && {
+      ssl: { rejectUnauthorized: false },
+    }),
   });
 
   pool.on('error', (err: Error) => {
