@@ -92,7 +92,7 @@ export function UserTable({ users, isLoading, onEdit, onDelete }: UserTableProps
             placeholder="Search by name or email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full max-w-xs pl-10 pr-4 py-3 rounded-md border border-input bg-background text-sm text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="w-full sm:max-w-xs pl-10 pr-4 py-3 rounded-md border border-input bg-background text-sm text-foreground placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
         </div>
       </div>
@@ -174,8 +174,9 @@ export function UserTable({ users, isLoading, onEdit, onDelete }: UserTableProps
                           {onEdit && (
                             <button
                               onClick={() => onEdit(user)}
-                              className="rounded-md p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition"
+                              className="rounded-md p-2.5 text-muted-foreground hover:bg-muted hover:text-foreground transition touch-manipulation"
                               title="Edit user"
+                              aria-label="Edit user"
                             >
                               <Pencil className="h-4 w-4" />
                             </button>
@@ -183,8 +184,9 @@ export function UserTable({ users, isLoading, onEdit, onDelete }: UserTableProps
                           {onDelete && (
                             <button
                               onClick={() => handleDeleteClick(user)}
-                              className="rounded-md p-2 text-muted-foreground hover:bg-destructive/20 hover:text-destructive transition"
+                              className="rounded-md p-2.5 text-muted-foreground hover:bg-destructive/20 hover:text-destructive transition touch-manipulation"
                               title="Delete user"
+                              aria-label="Delete user"
                             >
                               <Trash2 className="h-4 w-4" />
                             </button>
@@ -202,8 +204,8 @@ export function UserTable({ users, isLoading, onEdit, onDelete }: UserTableProps
 
       {/* Delete Confirmation Modal */}
       {deleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-2xl border border-slate-700 bg-slate-900 p-6 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md rounded-2xl border border-slate-700 bg-slate-900 p-4 sm:p-6 shadow-2xl">
             <h3 className="text-lg font-semibold text-slate-100">Delete User</h3>
             <p className="mt-2 text-sm text-slate-400">
               Are you sure you want to delete <span className="font-medium text-slate-200">{deleteConfirm.email}</span>? This action cannot be undone.
@@ -211,13 +213,13 @@ export function UserTable({ users, isLoading, onEdit, onDelete }: UserTableProps
             <div className="mt-6 flex gap-3">
               <button
                 onClick={() => setDeleteConfirm(null)}
-                className="flex-1 rounded-lg border border-slate-700 bg-slate-800 px-4 py-2 text-sm font-medium text-slate-200 hover:bg-slate-700 transition"
+                className="flex-1 rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm font-medium text-slate-200 hover:bg-slate-700 transition touch-manipulation"
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirmDelete}
-                className="flex-1 rounded-lg bg-rose-500 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-400 transition"
+                className="flex-1 rounded-lg bg-rose-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-rose-400 transition touch-manipulation"
               >
                 Delete
               </button>

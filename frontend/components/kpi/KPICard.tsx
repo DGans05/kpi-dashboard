@@ -58,7 +58,7 @@ export function KPICard({
   return (
     <Card
       className={cn(
-        'relative overflow-hidden p-6 transition-all hover:shadow-elevated',
+        'relative overflow-hidden p-4 sm:p-6 transition-all hover:shadow-elevated',
         className
       )}
     >
@@ -74,7 +74,7 @@ export function KPICard({
         />
       )}
 
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex items-start justify-between gap-3 sm:gap-4">
         <div className="flex-1 space-y-2">
           {/* Title with icon */}
           <div className="flex items-center gap-2">
@@ -87,7 +87,7 @@ export function KPICard({
           </div>
 
           {/* Value */}
-          <p className="text-3xl font-bold tracking-tight text-foreground">
+          <p className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
             {formattedValue}
           </p>
 

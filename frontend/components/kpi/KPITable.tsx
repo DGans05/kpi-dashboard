@@ -246,8 +246,9 @@ export function KPITable({
                       {onEdit && (
                         <button
                           onClick={() => onEdit(entry)}
-                          className="rounded-lg p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition"
+                          className="rounded-lg p-2.5 text-muted-foreground hover:bg-muted hover:text-foreground transition touch-manipulation"
                           title="Edit entry"
+                          aria-label="Edit entry"
                         >
                           <Pencil className="h-4 w-4" />
                         </button>
@@ -255,8 +256,9 @@ export function KPITable({
                       {onDelete && (
                         <button
                           onClick={() => handleDeleteClick(entry.id)}
-                          className="rounded-lg p-2 text-muted-foreground hover:bg-destructive/20 hover:text-destructive transition"
+                          className="rounded-lg p-2.5 text-muted-foreground hover:bg-destructive/20 hover:text-destructive transition touch-manipulation"
                           title="Delete entry"
+                          aria-label="Delete entry"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -272,19 +274,19 @@ export function KPITable({
 
       {/* Delete Confirmation Modal */}
       {deleteConfirmId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <Card className="w-full max-w-md p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <Card className="w-full max-w-md p-4 sm:p-6">
             <h3 className="text-lg font-semibold text-foreground">Delete Entry</h3>
             <p className="mt-2 text-sm text-muted-foreground">
               Are you sure you want to delete this KPI entry? This action cannot be undone.
             </p>
             <div className="mt-6 flex gap-3">
-              <Button variant="outline" onClick={handleCancelDelete} className="flex-1">
+              <Button variant="outline" onClick={handleCancelDelete} className="flex-1 touch-manipulation">
                 Cancel
               </Button>
               <button
                 onClick={handleConfirmDelete}
-                className="flex-1 rounded-lg bg-destructive px-4 py-2 text-sm font-semibold text-destructive-foreground hover:bg-destructive/90 transition"
+                className="flex-1 rounded-lg bg-destructive px-4 py-2.5 text-sm font-semibold text-destructive-foreground hover:bg-destructive/90 transition touch-manipulation"
               >
                 Delete
               </button>

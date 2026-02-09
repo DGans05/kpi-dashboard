@@ -76,7 +76,7 @@ export function RestaurantTable({ restaurants, isLoading, onEdit, onDelete }: Re
             placeholder="Search by name or city..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full max-w-xs pl-10 pr-4 py-2 rounded-lg border border-slate-700 bg-slate-900 text-sm text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+            className="w-full sm:max-w-xs pl-10 pr-4 py-2 rounded-lg border border-slate-700 bg-slate-900 text-sm text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
           />
         </div>
       </div>
@@ -147,8 +147,9 @@ export function RestaurantTable({ restaurants, isLoading, onEdit, onDelete }: Re
                         {onEdit && (
                           <button
                             onClick={() => onEdit(restaurant)}
-                            className="rounded-lg p-2 text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition"
+                            className="rounded-lg p-2.5 text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition touch-manipulation"
                             title="Edit restaurant"
+                            aria-label="Edit restaurant"
                           >
                             <Pencil className="h-4 w-4" />
                           </button>
@@ -156,8 +157,9 @@ export function RestaurantTable({ restaurants, isLoading, onEdit, onDelete }: Re
                         {onDelete && (
                           <button
                             onClick={() => handleDeleteClick(restaurant)}
-                            className="rounded-lg p-2 text-slate-400 hover:bg-rose-500/20 hover:text-rose-400 transition"
+                            className="rounded-lg p-2.5 text-slate-400 hover:bg-rose-500/20 hover:text-rose-400 transition touch-manipulation"
                             title="Delete restaurant"
+                            aria-label="Delete restaurant"
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>
@@ -174,8 +176,8 @@ export function RestaurantTable({ restaurants, isLoading, onEdit, onDelete }: Re
 
       {/* Delete Confirmation Modal */}
       {deleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-2xl border border-slate-700 bg-slate-900 p-6 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md rounded-2xl border border-slate-700 bg-slate-900 p-4 sm:p-6 shadow-2xl">
             <h3 className="text-lg font-semibold text-slate-100">Delete Restaurant</h3>
             <p className="mt-2 text-sm text-slate-400">
               Are you sure you want to delete <span className="font-medium text-slate-200">{deleteConfirm.name}</span>? This action cannot be undone.
@@ -183,13 +185,13 @@ export function RestaurantTable({ restaurants, isLoading, onEdit, onDelete }: Re
             <div className="mt-6 flex gap-3">
               <button
                 onClick={() => setDeleteConfirm(null)}
-                className="flex-1 rounded-lg border border-slate-700 bg-slate-800 px-4 py-2 text-sm font-medium text-slate-200 hover:bg-slate-700 transition"
+                className="flex-1 rounded-lg border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm font-medium text-slate-200 hover:bg-slate-700 transition touch-manipulation"
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirmDelete}
-                className="flex-1 rounded-lg bg-rose-500 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-400 transition"
+                className="flex-1 rounded-lg bg-rose-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-rose-400 transition touch-manipulation"
               >
                 Delete
               </button>
