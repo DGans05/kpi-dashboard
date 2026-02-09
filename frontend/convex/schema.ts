@@ -65,4 +65,38 @@ export default defineSchema({
     ipAddress: v.optional(v.string()),
     userAgent: v.optional(v.string()),
   }),
+
+  alert_rules: defineTable({
+    restaurantId: v.id("restaurants"),
+    metric: v.string(), // "labourCostPercent", "foodCostPercent", "revenue", etc.
+    operator: v.string(), // "greater_than", "less_than", "equals"
+    threshold: v.number(),
+    severity: v.string(), // "warning", "critical"
+    enabled: v.boolean(),
+    notifyEmail: v.boolean(),
+    notifySms: v.boolean(),
+    recipients: v.array(v.string()), // email addresses
+    cooldownMinutes: v.number(), // prevent alert spam
+    createdBy: v.string(),
+  })
+    .index("by_restaurant", ["restaurantId"])
+    .index("by_restaurant_enabled", ["restaurantId", "enabled"]),
+
+  alert_history: defineTable({
+    ruleId: v.id("alert_rules"),
+    restaurantId: v.id("restaurants"),
+    metric: v.string(),
+    value: v.number(),
+    threshold: v.number(),
+    severity: v.string(),
+    message: v.string(),
+    acknowledged: v.boolean(),
+    acknowledgedBy: v.optional(v.string()),
+    acknowledgedAt: v.optional(v.number()),
+    notificationSent: v.boolean(),
+    notificationError: v.optional(v.string()),
+  })
+    .index("by_restaurant", ["restaurantId"])
+    .index("by_rule", ["ruleId"])
+    .index("by_acknowledged", ["acknowledged"]),
 });

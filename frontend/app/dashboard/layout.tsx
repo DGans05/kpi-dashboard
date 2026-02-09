@@ -38,6 +38,7 @@ const navItems: Array<{
   { label: 'KPI Entries', href: '/dashboard/kpi', icon: FileSpreadsheet },
   { label: 'Labour KPIs', href: '/dashboard/labour', icon: Users },
   { label: 'Food KPIs', href: '/dashboard/food', icon: Utensils },
+  { label: 'Alerts', href: '/dashboard/alerts', icon: Bell },
   { label: 'Settings', href: '/dashboard/settings', icon: Settings },
   { label: 'Admin', href: '/dashboard/admin', icon: ShieldCheck, adminOnly: true },
 ];
