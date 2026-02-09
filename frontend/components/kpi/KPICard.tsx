@@ -2,6 +2,7 @@
 
 import type { ReactNode } from 'react';
 import { TrendIndicator } from './TrendIndicator';
+import { Sparkline } from './Sparkline';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { formatCurrency, formatPercentage, formatNumber } from '@/lib/utils/formatters';
@@ -17,6 +18,9 @@ interface KPICardProps {
   target?: number;
   icon?: ReactNode;
   className?: string;
+  sparklineData?: number[]; // 7-day historical data for mini chart
+  compareValue?: number; // Value to compare against (yesterday, last week)
+  compareLabel?: string; // Label for comparison (e.g., "vs yesterday")
 }
 
 export function KPICard({
@@ -29,6 +33,9 @@ export function KPICard({
   target,
   icon,
   className = '',
+  sparklineData,
+  compareValue,
+  compareLabel = 'vs previous',
 }: KPICardProps) {
   // Format the value based on type
   const formattedValue = (() => {
@@ -55,10 +62,19 @@ export function KPICard({
     critical: 'Critical',
   };
 
+  // Sparkline color based on status
+  const sparklineColor = status === 'critical'
+    ? 'rgb(239 68 68)'
+    : status === 'warning'
+    ? 'rgb(245 158 11)'
+    : 'rgb(34 197 94)';
+
   return (
     <Card
       className={cn(
-        'relative overflow-hidden p-4 sm:p-6 transition-all hover:shadow-elevated',
+        'relative overflow-hidden p-4 sm:p-6 transition-all duration-300',
+        'hover:shadow-lg hover:scale-[1.02] hover:border-primary/50',
+        status === 'critical' && 'animate-pulse-glow border-destructive/20',
         className
       )}
     >
@@ -87,9 +103,23 @@ export function KPICard({
           </div>
 
           {/* Value */}
-          <p className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+          <p className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground animate-count-up">
             {formattedValue}
           </p>
+
+          {/* Sparkline */}
+          {sparklineData && sparklineData.length > 0 && (
+            <div className="mt-2">
+              <Sparkline
+                data={sparklineData}
+                width={100}
+                height={20}
+                lineColor={sparklineColor}
+                fillColor={sparklineColor}
+                animate={true}
+              />
+            </div>
+          )}
 
           {/* Target */}
           {target !== undefined && (
@@ -108,10 +138,16 @@ export function KPICard({
       </div>
 
       {/* Trend section */}
-      {trend !== undefined && (
+      {(trend !== undefined || compareValue !== undefined) && (
         <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
-          <span className="text-xs text-muted-foreground">vs previous period</span>
-          <TrendIndicator value={trend} inverse={trendInverse} />
+          <span className="text-xs text-muted-foreground">{compareLabel}</span>
+          {trend !== undefined ? (
+            <TrendIndicator value={trend} inverse={trendInverse} />
+          ) : compareValue !== undefined ? (
+            <div className="text-xs font-semibold">
+              {compareValue > 0 ? '+' : ''}{compareValue.toFixed(1)}%
+            </div>
+          ) : null}
         </div>
       )}
     </Card>
